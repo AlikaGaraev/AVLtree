@@ -14,7 +14,8 @@ class AVLNode(object):
 	@type value: any
 	@param value: data of your node
 	"""
-	def __init__(self, value):
+	def __init__(self, key, value):
+		self.key = key
 		self.value = value
 		self.left = None
 		self.right = None
