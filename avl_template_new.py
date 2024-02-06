@@ -208,3 +208,48 @@ class AVLTree(object):
     """
     def get_root(self):
         return None
+
+    """performs a rotation, by default to the left, but if "right" is true than to the right
+
+    @type x: AVLNode 
+    @param x: the old root of the sub-tree to be rotated
+    @type right: bool 
+    @param right: whether to perform a right rotation
+    @rtype: AVLNode
+    @returns: the new root of the sub-tree
+    """
+    def rotate(self, x, right=False):
+        children = ["right", "left"]
+        if right:
+            children.reverse()
+
+        # Perform rotation
+        y = x[children[0]]
+        z = y[children[1]]
+        x[children[0]] = z
+        y[children[1]] = x
+
+        # Update heights
+        x.height = 1 + max(x.left.get_height(), x.right.get_height())
+        y.height = 1 + max(y.left.get_height(), y.right.get_height())
+
+        # Return the new root
+        return y
+
+    """performs a left rotation
+    
+    @rtype: AVLNode
+    @returns: the new root of the tree
+    """
+    def left_rotate(self, x):
+        return self.rotate(x)
+
+    """performs a right rotation
+
+    @type x: AVLNode 
+    @param x: the old root of the sub-tree to be rotated
+    @rtype: AVLNode
+    @returns: the new root of the tree
+    """
+    def right_rotate(self, x):
+        return self.rotate(x, True)
