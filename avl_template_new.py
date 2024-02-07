@@ -148,6 +148,7 @@ class AVLTree(object):
     """
     def __init__(self):
         self.root = None
+        self.size = 0
 
     # add your fields here
 
@@ -172,6 +173,7 @@ class AVLTree(object):
     @returns: the number of rebalancing operation due to AVL rebalancing
     """
     def insert(self, key, val):
+        # TODO update size
         return -1
 
     """deletes node from the dictionary
