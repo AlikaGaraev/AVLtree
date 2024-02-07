@@ -184,7 +184,57 @@ class AVLTree(object):
     @returns: the number of rebalancing operation due to AVL rebalancing
     """
     def delete(self, node):
-        return -1
+        if not node.is_real_node():
+            return 0
+
+        if not node.get_left().is_real_node() and not node.get_right().is_real_node():  # leaf
+            new_node = AVLNode(None, None)
+
+        elif not node.get_left().is_real_node() or not node.get_right().is_real_node():  # has just one child
+            new_node = node.get_left()
+            if not new_node.is_real_node():
+                new_node = node.get_right()
+
+        else:  # has two children
+            new_node = node.get_right()
+            while new_node.get_left().is_real_node():
+                new_node = new_node.get_left()
+            self.delete(new_node)
+
+        parent = node.get_parent()
+        self.size -= 1
+
+        is_left_child = parent.get_left().get_key() == node.get_key()
+        if is_left_child:
+            parent.set_left(new_node)
+        else:
+            parent.set_right(new_node)
+
+        rotation_count = 0
+
+        while parent is not None:  # we go up here, so we can't use is_real_node()
+            old_height = parent.get_height()
+            parent.set_height(1 + max(parent.get_left().get_height(), parent.get_right().get_height()))
+
+            if abs(parent.get_bf()) < 2 and old_height == parent.get_height():
+                return rotation_count
+            elif abs(parent.get_bf()) < 2:
+                parent = parent.get_parent()
+            else:
+                if parent.get_bf() == -2:
+                    if parent.get_right().get_bf() == 1:  # right rotation before
+                        self.right_rotate(parent.get_right())
+                        rotation_count += 1
+                    self.left_rotate(parent)
+                else:
+                    if parent.get_left().get_bf() == -1:  # left rotation before
+                        self.left_rotate(parent.get_left())
+                        rotation_count += 1
+                    self.right_rotate(parent)
+                rotation_count += 1
+                parent = parent.get_parent()
+
+        return rotation_count
 
     """returns an array representing dictionary 
 
