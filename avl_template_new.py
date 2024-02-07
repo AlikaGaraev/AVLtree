@@ -11,7 +11,7 @@
 class AVLNode(object):
     """Constructor, you are allowed to add more fields. 
 
-    @type key: int
+    @type key: int | None
     @param key: key of your node
     @type value: any
     @param value: data of your node
@@ -49,7 +49,7 @@ class AVLNode(object):
 
     """returns the key
 
-    @rtype: int
+    @rtype: int | None
     @returns: the key of self, None if the node is virtual
     """
     def get_key(self):
