@@ -71,6 +71,23 @@ class AVLNode(object):
     def get_height(self):
         return self.height
 
+    """returns the balance factor
+
+    @rtype: int
+    @returns: the balance factor of self, 0 if the node is virtual
+    """
+    def get_bf(self):
+        if not self.is_real_node():
+            return 0
+
+        balance_factor = 0
+        if self.get_left().is_real_node():
+            balance_factor += self.get_left().get_height()
+        if self.get_right().is_real_node():
+            balance_factor -= self.get_right().get_height()
+
+        return balance_factor
+
     """sets left child
 
     @type node: AVLNode
