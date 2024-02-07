@@ -248,21 +248,23 @@ class AVLTree(object):
     @returns: the new root of the sub-tree
     """
     def rotate(self, x, right=False):
-        children = ["right", "left"]
+        if not x.is_real_node():
+            return x
+
         if right:
-            children.reverse()
+            y = x.get_left()
+            z = y.get_right()
+            x.set_left(z)
+            y.set_right(x)
+        else:
+            y = x.get_right()
+            z = y.get_left()
+            x.set_right(z)
+            y.set_left(x)
 
-        # Perform rotation
-        y = x[children[0]]
-        z = y[children[1]]
-        x[children[0]] = z
-        y[children[1]] = x
+        x.set_height(1 + max(x.get_left().get_height(), x.get_right().get_height(), 0))
+        y.set_height(1 + max(y.get_left().get_height(), y.get_right().get_height(), 0))
 
-        # Update heights
-        x.height = 1 + max(x.left.get_height(), x.right.get_height())
-        y.height = 1 + max(y.left.get_height(), y.right.get_height())
-
-        # Return the new root
         return y
 
     """performs a left rotation
