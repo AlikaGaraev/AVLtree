@@ -16,6 +16,7 @@ class AVLNode(object):
     @type value: any
     @param value: data of your node
     """
+
     def __init__(self, key, value):
         self.key = key
         self.value = value
@@ -33,6 +34,7 @@ class AVLNode(object):
     @rtype: AVLNode
     @returns: the left child of self, None if there is no left child (if self is virtual)
     """
+
     def get_left(self):
         return self.left
 
@@ -41,6 +43,7 @@ class AVLNode(object):
     @rtype: AVLNode
     @returns: the right child of self, None if there is no right child (if self is virtual)
     """
+
     def get_right(self):
         return self.right
 
@@ -49,6 +52,7 @@ class AVLNode(object):
     @rtype: AVLNode
     @returns: the parent of self, None if there is no parent
     """
+
     def get_parent(self):
         return self.parent
 
@@ -57,6 +61,7 @@ class AVLNode(object):
     @rtype: int | None
     @returns: the key of self, None if the node is virtual
     """
+
     def get_key(self):
         return self.key
 
@@ -65,6 +70,7 @@ class AVLNode(object):
     @rtype: any
     @returns: the value of self, None if the node is virtual
     """
+
     def get_value(self):
         return self.value
 
@@ -73,6 +79,7 @@ class AVLNode(object):
     @rtype: int
     @returns: the height of self, -1 if the node is virtual
     """
+
     def get_height(self):
         return self.height
 
@@ -81,6 +88,7 @@ class AVLNode(object):
     @rtype: int
     @returns: the balance factor of self, 0 if the node is virtual
     """
+
     def get_bf(self):
         if not self.is_real_node():
             return 0
@@ -91,6 +99,7 @@ class AVLNode(object):
     @type node: AVLNode
     @param node: a node
     """
+
     def set_left(self, node):
         if self.is_real_node():
             self.left = node
@@ -102,6 +111,7 @@ class AVLNode(object):
     @type node: AVLNode
     @param node: a node
     """
+
     def set_right(self, node):
         if self.is_real_node():
             self.right = node
@@ -113,6 +123,7 @@ class AVLNode(object):
     @type node: AVLNode
     @param node: a node
     """
+
     def set_parent(self, node):
         self.parent = node
 
@@ -121,6 +132,7 @@ class AVLNode(object):
     @type value: any
     @param value: data
     """
+
     def set_value(self, value):
         self.value = value
 
@@ -129,6 +141,7 @@ class AVLNode(object):
     @type h: int
     @param h: the height
     """
+
     def set_height(self, h):
         self.height = h
 
@@ -137,6 +150,7 @@ class AVLNode(object):
     @rtype: bool
     @returns: False if self is a virtual node, True otherwise.
     """
+
     def is_real_node(self):
         return self.key is not None
 
@@ -150,6 +164,7 @@ class AVLTree(object):
     """
     Constructor, you are allowed to add more fields.  
     """
+
     def __init__(self):
         self.root = None
         self.size = 0
@@ -163,6 +178,7 @@ class AVLTree(object):
     @rtype: any
     @returns: AVLNode.
     """
+
     def search(self, key):
         curr = self.root
         while curr.get_key() is not None:
@@ -184,6 +200,7 @@ class AVLTree(object):
     @rtype: int
     @returns: the number of rebalancing operation due to AVL rebalancing
     """
+
     def insert(self, key, val):
         if self.root is None:
             self.root.key = key
@@ -205,6 +222,7 @@ class AVLTree(object):
     @rtype: int
     @returns: the number of rebalancing operation due to AVL rebalancing
     """
+
     def delete(self, node):
         if not node.is_real_node():
             return 0
@@ -261,6 +279,7 @@ class AVLTree(object):
     @rtype: list
     @returns: a sorted list according to key of touples (key, value) representing the data structure
     """
+
     def avl_to_array(self):
         if self.root is None:
             return []
@@ -273,6 +292,7 @@ class AVLTree(object):
     @rtype: list
     @returns: in order scanned list with tuples (key, value) representing the data structure
     """
+
     def in_order_scan(self, node):
         if not node.is_real_node():
             return []
@@ -285,6 +305,7 @@ class AVLTree(object):
     @rtype: int
     @returns: the number of items in dictionary 
     """
+
     def size(self):
         return -1
 
@@ -298,6 +319,7 @@ class AVLTree(object):
     dictionary smaller than node.key, right is an AVLTree representing the keys in the 
     dictionary larger than node.key.
     """
+
     def split(self, node):
         return None
 
@@ -313,6 +335,7 @@ class AVLTree(object):
     @rtype: int
     @returns: the absolute value of the difference between the height of the AVL trees joined
     """
+
     def join(self, tree2, key, val):
         return None
 
@@ -321,6 +344,7 @@ class AVLTree(object):
     @rtype: AVLNode
     @returns: the root, None if the dictionary is empty
     """
+
     def get_root(self):
         return self.root
 
@@ -333,6 +357,7 @@ class AVLTree(object):
     @rtype: AVLNode
     @returns: the new root of the sub-tree
     """
+
     def rotate(self, x, right=False):
         if not x.is_real_node():
             return x
@@ -365,6 +390,7 @@ class AVLTree(object):
     @rtype: AVLNode
     @returns: the new root of the tree
     """
+
     def left_rotate(self, x):
         return self.rotate(x)
 
@@ -375,5 +401,6 @@ class AVLTree(object):
     @rtype: AVLNode
     @returns: the new root of the tree
     """
+
     def right_rotate(self, x):
         return self.rotate(x, True)
