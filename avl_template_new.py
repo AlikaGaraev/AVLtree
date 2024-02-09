@@ -271,9 +271,7 @@ class AVLTree(object):
         while parent is not None:  # we go up here, so we can't use is_real_node()
             if abs(parent.get_bf()) < 2 and old_height == parent.get_height():
                 return rotation_count
-            elif abs(parent.get_bf()) < 2:
-                parent = parent.get_parent()
-            else:
+            elif abs(parent.get_bf()) == 2:
                 if parent.get_bf() == -2:
                     if parent.get_right().get_bf() == 1:  # right rotation before
                         self.right_rotate(parent.get_right())
@@ -285,7 +283,10 @@ class AVLTree(object):
                         rotation_count += 1
                     self.right_rotate(parent)
                 rotation_count += 1
-                parent = parent.get_parent()
+            parent = parent.get_parent()
+            if parent is not None:
+                old_height = parent.get_height()
+                parent.set_height(1 + max(parent.get_left().get_height(), parent.get_right().get_height()))
 
         return rotation_count
 
