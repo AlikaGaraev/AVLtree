@@ -219,7 +219,7 @@ class AVLTree(object):
     """" looks for key in the sub tree of root and returns the lest node encountered"""
 
     def tree_position(self, key):
-
+        root = self.root
         while root is not None:
             y = root
             if key == root.get_key():
