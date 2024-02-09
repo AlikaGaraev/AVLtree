@@ -104,7 +104,7 @@ class AVLNode(object):
         if self.is_real_node():
             self.left = node
             self.left.set_parent(self)
-            self.set_height(1 + max(self.get_left().get_height(), self.get_right().get_height()))
+            self.set_height(1 + max(self.left.get_height(), self.right.get_height()))
 
     """sets right child
 
@@ -116,7 +116,7 @@ class AVLNode(object):
         if self.is_real_node():
             self.right = node
             self.right.set_parent(self)
-            self.set_height(1 + max(self.get_left().get_height(), self.get_right().get_height()))
+            self.set_height(1 + max(self.left.get_height(), self.right.get_height()))
 
     """sets parent
 
@@ -200,8 +200,12 @@ class AVLTree(object):
 
     def insert(self, key, val):
         new_node = AVLNode(key, val)
+        old_height = 0
+
         if self.root is None:
             self.root = new_node
+            return 0
+
         else:
             y = self.tree_position(key)
             if new_node.get_key() < y.get_key():
@@ -209,31 +213,13 @@ class AVLTree(object):
             else:
                 y.set_right(new_node)
         self.size += 1
-        rotation_count = 0
-        parent = new_node.get_parent()
-        while parent is not None:  # we are traveling up until we get to the root
-            old_height = parent.get_height #still old hight, not updated
-            parent.set_height(1 + max(parent.get_left().get_height(), parent.get_right().get_height()))  #updating new hight
-            parent_bf = parent.get_bf()
-            if abs(parent_bf) < 2 and old_height == parent.get_height(): #3.2
-                return rotation_count
-            elif abs(parent_bf) < 2 and old_height != parent.get_height(): #3.3
-                parent = parent.get_parent()
-            elif abs(parent_bf) == 2: #3.3
-                if parent_bf == -2:
-                    if parent.get_right().get_bf() == 1:  # right rotation before
-                        self.right_rotate(parent.get_right())
-                        rotation_count += 1
-                    self.left_rotate(parent)
-                else:
-                    if parent.get_left().get_bf() == -1:  # left rotation before
-                        self.left_rotate(parent.get_left())
-                        rotation_count += 1
-                    self.right_rotate(parent)
-                rotation_count += 1
-                parent = parent.get_parent()
-        return rotation_count
 
+        parent = new_node.get_parent()
+        parent.set_height(
+            1 + max(parent.get_left().get_height(), parent.get_right().get_height())
+        )  # update new height
+
+        return self.fix_tree(parent, old_height)
 
     """" looks for key in the sub tree of root and returns the last node encountered"""
 
@@ -266,10 +252,16 @@ class AVLTree(object):
         if not node.is_real_node():
             return 0
 
-        if not node.get_left().is_real_node() and not node.get_right().is_real_node():  # leaf
+        rotation_count = 0
+
+        if (
+            not node.get_left().is_real_node() and not node.get_right().is_real_node()
+        ):  # leaf
             new_node = AVLNode(None, None)
 
-        elif not node.get_left().is_real_node() or not node.get_right().is_real_node():  # has just one child
+        elif (
+            not node.get_left().is_real_node() or not node.get_right().is_real_node()
+        ):  # has just one child
             new_node = node.get_left()
             if not new_node.is_real_node():
                 new_node = node.get_right()
@@ -278,11 +270,20 @@ class AVLTree(object):
             new_node = node.get_right()
             while new_node.get_left().is_real_node():
                 new_node = new_node.get_left()
-            self.delete(new_node)
+            rotation_count += self.delete(new_node)
+            self.size += 1
+            new_node.set_left(node.get_left())
+            new_node.set_right(node.get_right())
+
+        self.size -= 1
+
+        if self.root.get_key() == node.get_key():
+            self.root = new_node
+            self.root.parent = None
+            return rotation_count
 
         parent = node.get_parent()
         old_height = parent.get_height()
-        self.size -= 1
 
         is_left_child = parent.get_left().get_key() == node.get_key()
         if is_left_child:
@@ -290,11 +291,17 @@ class AVLTree(object):
         else:
             parent.set_right(new_node)
 
+        return self.fix_tree(parent, old_height)
+
+    def fix_tree(self, node, init_height):
+        parent = node
+        old_height = init_height
         rotation_count = 0
 
         while parent is not None:  # we go up here, so we can't use is_real_node()
             if abs(parent.get_bf()) < 2 and old_height == parent.get_height():
                 return rotation_count
+
             elif abs(parent.get_bf()) == 2:
                 if parent.get_bf() == -2:
                     if parent.get_right().get_bf() == 1:  # right rotation before
@@ -306,11 +313,17 @@ class AVLTree(object):
                         self.left_rotate(parent.get_left())
                         rotation_count += 1
                     self.right_rotate(parent)
-                rotation_count += 1
+
+            rotation_count += 1
             parent = parent.get_parent()
             if parent is not None:
                 old_height = parent.get_height()
-                parent.set_height(1 + max(parent.get_left().get_height(), parent.get_right().get_height()))
+                parent.set_height(
+                    1
+                    + max(
+                        parent.get_left().get_height(), parent.get_right().get_height()
+                    )
+                )
 
         return rotation_count
 
