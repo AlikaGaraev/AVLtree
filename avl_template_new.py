@@ -23,10 +23,12 @@ class AVLNode(object):
             self.left = AVLNode(None, None)
             self.right = AVLNode(None, None)
             self.height = 0
+            self.size = 1
         else:
             self.left = None
             self.right = None
             self.height = -1
+            self.size = 0
         self.parent = None
 
     def get_left(self):
@@ -82,6 +84,15 @@ class AVLNode(object):
         """
         return self.height
 
+    def get_size(self):
+        """
+        Returns the size of the sub-tree
+
+        :rtype: int
+        :returns: the size of self, 0 if the node is virtual
+        """
+        return self.size
+
     def get_bf(self):
         """
         Returns the balance factor
@@ -104,6 +115,7 @@ class AVLNode(object):
             self.left = node
             self.left.set_parent(self)
             self.set_height(1 + max(self.left.get_height(), self.right.get_height()))
+            self.set_size(1 + self.left.get_size() + self.right.get_size())
 
     def set_right(self, node):
         """
@@ -116,12 +128,13 @@ class AVLNode(object):
             self.right = node
             self.right.set_parent(self)
             self.set_height(1 + max(self.left.get_height(), self.right.get_height()))
+            self.set_size(1 + self.left.get_size() + self.right.get_size())
 
     def set_parent(self, node):
         """
         Sets parent
 
-        :type node: AVLNode
+        :type node: AVLNode | None
         :param node: a node
         """
         self.parent = node
@@ -143,6 +156,15 @@ class AVLNode(object):
         :param h: the height
         """
         self.height = h
+
+    def set_size(self, s):
+        """
+        Sets the size of the node
+
+        :type s: int
+        :param s: the size
+        """
+        self.size = s
 
     def is_real_node(self):
         """
@@ -207,12 +229,14 @@ class AVLTree(object):
                 y.set_left(new_node)
             else:
                 y.set_right(new_node)
-        self.tree_size += 1
 
         parent = new_node.get_parent()
         parent.set_height(
             1 + max(parent.get_left().get_height(), parent.get_right().get_height())
-        )  # update new height
+        )
+        parent.set_size(
+            1 + parent.get_left().get_size() + parent.get_right().get_size()
+        )
 
         return self.fix_tree(parent, old_height)
 
@@ -272,11 +296,8 @@ class AVLTree(object):
             while new_node.get_left().is_real_node():
                 new_node = new_node.get_left()
             rotation_count += self.delete(new_node)
-            self.tree_size += 1
             new_node.set_left(node.get_left())
             new_node.set_right(node.get_right())
-
-        self.tree_size -= 1
 
         if self.root.get_key() == node.get_key():
             self.root = new_node
@@ -311,7 +332,7 @@ class AVLTree(object):
 
         while parent is not None:  # we go up here, so we can't use is_real_node()
             if abs(parent.get_bf()) < 2 and old_height == parent.get_height():
-                return rotation_count
+                rotation_count -= 1  # don't count updating sizes!
 
             elif abs(parent.get_bf()) == 2:
                 if parent.get_bf() == -2:
@@ -334,6 +355,9 @@ class AVLTree(object):
                     + max(
                         parent.get_left().get_height(), parent.get_right().get_height()
                     )
+                )
+                parent.set_size(
+                    1 + parent.get_left().get_size() + parent.get_right().get_size()
                 )
 
         return rotation_count
