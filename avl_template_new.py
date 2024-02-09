@@ -19,10 +19,15 @@ class AVLNode(object):
     def __init__(self, key, value):
         self.key = key
         self.value = value
-        self.left = None
-        self.right = None
+        if key is not None:
+            self.left = AVLNode(None, None)
+            self.right = AVLNode(None, None)
+            self.height = 0
+        else:
+            self.left = None
+            self.right = None
+            self.height = -1
         self.parent = None
-        self.height = -1
 
     """returns the left child
     @rtype: AVLNode
@@ -79,14 +84,7 @@ class AVLNode(object):
     def get_bf(self):
         if not self.is_real_node():
             return 0
-
-        balance_factor = 0
-        if self.get_left().is_real_node():
-            balance_factor += self.get_left().get_height()
-        if self.get_right().is_real_node():
-            balance_factor -= self.get_right().get_height()
-
-        return balance_factor
+        return self.get_left().get_height() - self.get_right().get_height()
 
     """sets left child
 
@@ -94,7 +92,9 @@ class AVLNode(object):
     @param node: a node
     """
     def set_left(self, node):
-        self.left = node
+        if self.is_real_node():
+            self.left = node
+            self.set_height(1 + max(self.get_left().get_height(), self.get_right().get_height()))
 
     """sets right child
 
@@ -102,7 +102,9 @@ class AVLNode(object):
     @param node: a node
     """
     def set_right(self, node):
-        self.right = node
+        if self.is_real_node():
+            self.right = node
+            self.set_height(1 + max(self.get_left().get_height(), self.get_right().get_height()))
 
     """sets parent
 
@@ -134,7 +136,7 @@ class AVLNode(object):
     @returns: False if self is a virtual node, True otherwise.
     """
     def is_real_node(self):
-        return self.key is None
+        return self.key is not None
 
 
 """
@@ -220,6 +222,7 @@ class AVLTree(object):
             self.delete(new_node)
 
         parent = node.get_parent()
+        old_height = parent.get_height()
         self.size -= 1
 
         is_left_child = parent.get_left().get_key() == node.get_key()
@@ -231,9 +234,6 @@ class AVLTree(object):
         rotation_count = 0
 
         while parent is not None:  # we go up here, so we can't use is_real_node()
-            old_height = parent.get_height()
-            parent.set_height(1 + max(parent.get_left().get_height(), parent.get_right().get_height()))
-
             if abs(parent.get_bf()) < 2 and old_height == parent.get_height():
                 return rotation_count
             elif abs(parent.get_bf()) < 2:
@@ -306,42 +306,21 @@ class AVLTree(object):
     def get_root(self):
         return self.root
 
-    """performs a rotation, by default to the left, but if "right" is true than to the right
-
-    @type x: AVLNode 
-    @param x: the old root of the sub-tree to be rotated
-    @type right: bool 
-    @param right: whether to perform a right rotation
-    @rtype: AVLNode
-    @returns: the new root of the sub-tree
-    """
-    def rotate(self, x, right=False):
-        if not x.is_real_node():
-            return x
-
-        if right:
-            y = x.get_left()
-            z = y.get_right()
-            x.set_left(z)
-            y.set_right(x)
-        else:
-            y = x.get_right()
-            z = y.get_left()
-            x.set_right(z)
-            y.set_left(x)
-
-        x.set_height(1 + max(x.get_left().get_height(), x.get_right().get_height(), 0))
-        y.set_height(1 + max(y.get_left().get_height(), y.get_right().get_height(), 0))
-
-        return y
-
     """performs a left rotation
     
     @rtype: AVLNode
     @returns: the new root of the tree
     """
     def left_rotate(self, x):
-        return self.rotate(x)
+        if not x.is_real_node():
+            return x
+
+        y = x.get_right()
+        z = y.get_left()
+        x.set_right(z)
+        y.set_left(x)
+
+        return y
 
     """performs a right rotation
 
@@ -351,4 +330,12 @@ class AVLTree(object):
     @returns: the new root of the tree
     """
     def right_rotate(self, x):
-        return self.rotate(x, True)
+        if not x.is_real_node():
+            return x
+
+        y = x.get_left()
+        z = y.get_right()
+        x.set_left(z)
+        y.set_right(x)
+
+        return y
