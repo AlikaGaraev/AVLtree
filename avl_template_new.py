@@ -25,12 +25,10 @@ class AVLNode(object):
             self.right = AVLNode(None, None)
             self.right.set_parent(self)
             self.height = 0
-            self.size = 1
         else:
             self.left = None
             self.right = None
             self.height = -1
-            self.size = 0
         self.parent = None
 
     def get_left(self):
@@ -86,15 +84,6 @@ class AVLNode(object):
         """
         return self.height
 
-    def get_size(self):
-        """
-        Returns the size of the sub-tree
-
-        :rtype: int
-        :returns: the size of self, 0 if the node is virtual
-        """
-        return self.size
-
     def get_bf(self):
         """
         Returns the balance factor
@@ -117,7 +106,6 @@ class AVLNode(object):
             self.left = node
             self.left.set_parent(self)
             self.set_height(1 + max(self.left.get_height(), self.right.get_height()))
-            self.set_size(1 + self.left.get_size() + self.right.get_size())
 
     def set_right(self, node):
         """
@@ -130,7 +118,6 @@ class AVLNode(object):
             self.right = node
             self.right.set_parent(self)
             self.set_height(1 + max(self.left.get_height(), self.right.get_height()))
-            self.set_size(1 + self.left.get_size() + self.right.get_size())
 
     def set_parent(self, node):
         """
@@ -158,15 +145,6 @@ class AVLNode(object):
         :param h: the height
         """
         self.height = h
-
-    def set_size(self, s):
-        """
-        Sets the size of the node
-
-        :type s: int
-        :param s: the size
-        """
-        self.size = s
 
     def is_real_node(self):
         """
@@ -219,6 +197,7 @@ class AVLTree(object):
         :returns: the number of rebalancing operation due to AVL rebalancing
         """
         new_node = AVLNode(key, val)
+        self.tree_size += 1
         old_height = 0
 
         if self.root is None or not self.root.is_real_node():
@@ -235,9 +214,6 @@ class AVLTree(object):
         parent = new_node.get_parent()
         parent.set_height(
             1 + max(parent.get_left().get_height(), parent.get_right().get_height())
-        )
-        parent.set_size(
-            1 + parent.get_left().get_size() + parent.get_right().get_size()
         )
 
         return self.fix_tree(parent, old_height)
@@ -298,8 +274,11 @@ class AVLTree(object):
             while new_node.get_left().is_real_node():
                 new_node = new_node.get_left()
             rotation_count += self.delete(new_node)
+            self.tree_size += 1
             new_node.set_left(node.get_left())
             new_node.set_right(node.get_right())
+
+        self.tree_size -= 1
 
         if self.root.get_key() == node.get_key():
             self.root = new_node
@@ -334,7 +313,7 @@ class AVLTree(object):
 
         while parent is not None:  # we go up here, so we can't use is_real_node()
             if abs(parent.get_bf()) < 2 and old_height == parent.get_height():
-                rotation_count -= 1  # don't count updating sizes!
+                return rotation_count
 
             elif abs(parent.get_bf()) == 2:
                 if parent.get_bf() == -2:
@@ -358,9 +337,6 @@ class AVLTree(object):
                         parent.get_left().get_height(), parent.get_right().get_height()
                     )
                 )
-                parent.set_size(
-                    1 + parent.get_left().get_size() + parent.get_right().get_size()
-                )
 
         return rotation_count
 
@@ -375,21 +351,26 @@ class AVLTree(object):
             return []
         return self.in_order_scan(self.root)
 
-    def in_order_scan(self, node):
+    def in_order_scan(self, node, with_parent=False):
         """
         Scans the tree in order
 
         :type node: AVLNode
         :param node: root of tree to scan
+        :type with_parent: bool
+        :param with_parent: whether to include parent's key
         :rtype: list
         :returns: in order scanned list with tuples (key, value) representing the data structure
         """
         if not node.is_real_node():
             return []
+        node_rep = (node.get_key(), node.get_value())
+        if with_parent and node.get_parent() is not None:
+            node_rep += tuple([node.get_parent().get_key()])
         return (
-            self.in_order_scan(node.get_left())
-            + [(node.get_key(), node.get_value())]
-            + self.in_order_scan(node.get_right())
+            self.in_order_scan(node.get_left(), with_parent)
+            + [node_rep]
+            + self.in_order_scan(node.get_right(), with_parent)
         )
 
     def size(self):
@@ -433,18 +414,28 @@ class AVLTree(object):
         a = self.root
         b = tree2.get_root()
         diff = abs(a.get_height() - b.get_height())
+        self.tree_size = self.tree_size + 1 + tree2.size()
 
-        if a.get_height() >= b.get_height():
+        if a.get_height() == b.get_height():
+            self.root = new_node
+
+        elif a.get_height() > b.get_height():
+            self.root = a
             while a.get_height() > b.get_height():
                 a = a.get_right()
             a.get_parent().set_right(new_node)
+
         else:
+            self.root = b
             while a.get_height() < b.get_height():
                 b = b.get_left()
             b.get_parent().set_left(new_node)
 
         new_node.set_left(a)
         new_node.set_right(b)
+
+        if diff == 0:
+            return diff
 
         parent = new_node.get_parent()
         old_height = parent.get_height()
