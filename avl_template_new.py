@@ -206,7 +206,7 @@ class AVLTree(object):
         if self.root is None:
             self.root = new_node
         else:
-            y = self.tree_position(self.root, key)
+            y = self.tree_position(key)
             if new_node.get_key() < y.get_key():
                 y.set_left(new_node)
             else:
@@ -346,7 +346,7 @@ class AVLTree(object):
     """
 
     def size(self):
-        return -1
+        return self.size
 
     """splits the dictionary at the i'th index
 
@@ -360,7 +360,11 @@ class AVLTree(object):
     """
 
     def split(self, node):
-        return None
+        if self.size != 1:
+            return []
+        else:
+
+            return None
 
     """joins self with key and another AVLTree
 
