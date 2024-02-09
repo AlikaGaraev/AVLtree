@@ -198,7 +198,6 @@ class AVLTree(object):
         """
         new_node = AVLNode(key, val)
         self.tree_size += 1
-        old_height = 0
 
         if self.root is None or not self.root.is_real_node():
             self.root = new_node
@@ -206,17 +205,12 @@ class AVLTree(object):
 
         else:
             y = self.tree_position(key)
+            old_height = y.get_height()
             if new_node.get_key() < y.get_key():
                 y.set_left(new_node)
             else:
                 y.set_right(new_node)
-
-        parent = new_node.get_parent()
-        parent.set_height(
-            1 + max(parent.get_left().get_height(), parent.get_right().get_height())
-        )
-
-        return self.fix_tree(parent, old_height)
+            return self.fix_tree(y, old_height)
 
     def tree_position(self, key):
         """
@@ -415,6 +409,7 @@ class AVLTree(object):
         b = tree2.get_root()
         diff = abs(a.get_height() - b.get_height())
         self.tree_size = self.tree_size + 1 + tree2.size()
+        old_height = 0
 
         if a.get_height() == b.get_height():
             self.root = new_node
@@ -423,12 +418,14 @@ class AVLTree(object):
             self.root = a
             while a.get_height() > b.get_height():
                 a = a.get_right()
+            old_height = a.get_parent().get_height()
             a.get_parent().set_right(new_node)
 
         else:
             self.root = b
             while a.get_height() < b.get_height():
                 b = b.get_left()
+            old_height = b.get_parent().get_height()
             b.get_parent().set_left(new_node)
 
         new_node.set_left(a)
@@ -438,7 +435,6 @@ class AVLTree(object):
             return diff
 
         parent = new_node.get_parent()
-        old_height = parent.get_height()
         self.fix_tree(parent, old_height)
 
         return diff
