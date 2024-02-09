@@ -180,15 +180,12 @@ class AVLTree(object):
     """
 
     def search(self, key):
-        curr = self.root
-        while curr.get_key() is not None:
-            if key == curr.get_key():
-                return curr
-            elif key < curr.get_key():
-                curr = curr.get_left()
-            else:
-                curr = curr.get.right()
-        return None
+        if self.root is None:
+            return None
+        result = self.tree_position(key)
+        if result.get_key() != key:
+            return None
+        return result
 
     """inserts val at position i in the dictionary
 
@@ -206,7 +203,7 @@ class AVLTree(object):
         if self.root is None:
             self.root = new_node
         else:
-            y = self.tree_position(self.root, key)
+            y = self.tree_position(key)
             if new_node.get_key() < y.get_key():
                 y.set_left(new_node)
             else:
@@ -214,7 +211,7 @@ class AVLTree(object):
         self.size += 1
         rotation_count = 0
         parent = new_node.get_parent()
-        while parent is not None: #we are traveling up until we get to the root
+        while parent is not None:  # we are traveling up until we get to the root
             old_height = parent.get_height #still old hight, not updated
             parent.set_height(1 + max(parent.get_left().get_height(), parent.get_right().get_height()))  #updating new hight
             parent_bf = parent.get_bf()
@@ -234,24 +231,28 @@ class AVLTree(object):
                         rotation_count += 1
                     self.right_rotate(parent)
                 rotation_count += 1
-            parent = parent.get_parent()
+                parent = parent.get_parent()
         return rotation_count
 
 
-    """" looks for key in the sub tree of root and returns the lest node encountered"""
+    """" looks for key in the sub tree of root and returns the last node encountered"""
 
     def tree_position(self, key):
-        global y
-        root = self.root
-        while root is not None:
-            y = root
-            if key == root.get_key():
-                return root
-            elif key < root.get_key():
-                root = root.get_left()
+        if self.root is None:
+            return None
+
+        node = self.root
+        next_node = self.root
+        while next_node.is_real_node():
+            node = next_node
+            if node.get_key() == key:
+                return node
+            elif node.get_key() > key:
+                next_node = node.get_left()
             else:
-                root = root.get_right()
-        return y
+                next_node = node.get_right()
+
+        return node
 
     """deletes node from the dictionary
 
