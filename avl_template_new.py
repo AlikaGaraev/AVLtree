@@ -1,6 +1,6 @@
 # username - complete info
-# id1      - complete info 
-# name1    - complete info 
+# id1      - 323222141
+# name1    - Alika Garaev
 # id2      - 322868852
 # name2    - Ishay Yemini
 
