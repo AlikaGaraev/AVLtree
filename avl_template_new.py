@@ -221,7 +221,7 @@ class AVLTree(object):
         new_node = AVLNode(key, val)
         old_height = 0
 
-        if self.root is None:
+        if self.root is None or not self.root.is_real_node():
             self.root = new_node
             return 0
 
