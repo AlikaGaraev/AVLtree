@@ -22,7 +22,7 @@ class AVLNode(object):
         self.left = None
         self.right = None
         self.parent = None
-        self.height = -1  # Balance factor
+        self.height = -1
 
     """returns the left child
     @rtype: AVLNode
@@ -157,9 +157,17 @@ class AVLTree(object):
     @type key: int
     @param key: a key to be searched
     @rtype: any
-    @returns: the value corresponding to key.
+    @returns: AVLNode.
     """
     def search(self, key):
+        curr = self.root
+        while curr.get_key() is not None:
+            if key == curr.get_key():
+                return curr
+            elif key < curr.get_key():
+                curr = curr.get_left()
+            else:
+                curr = curr.get.right()
         return None
 
     """inserts val at position i in the dictionary
@@ -173,6 +181,16 @@ class AVLTree(object):
     @returns: the number of rebalancing operation due to AVL rebalancing
     """
     def insert(self, key, val):
+        if self.root is None:
+            self.root.key = key
+            self.root.set_value = val
+        #split?
+        if key < self.root.key:
+
+
+
+
+
         # TODO update size
         return -1
 
