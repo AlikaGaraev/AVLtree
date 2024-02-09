@@ -260,7 +260,23 @@ class AVLTree(object):
     @returns: a sorted list according to key of touples (key, value) representing the data structure
     """
     def avl_to_array(self):
-        return None
+        if self.root is None:
+            return []
+        return self.in_order_scan(self.root)
+
+    """scans the tree in order 
+
+    @type node: AVLNode
+    @param node: root of tree to scan
+    @rtype: list
+    @returns: in order scanned list with tuples (key, value) representing the data structure
+    """
+    def in_order_scan(self, node):
+        if not node.is_real_node():
+            return []
+        return (self.in_order_scan(node.get_left())
+                + [(node.get_key(), node.get_value())]
+                + self.in_order_scan(node.get_right()))
 
     """returns the number of items in dictionary 
 
