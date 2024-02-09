@@ -21,7 +21,9 @@ class AVLNode(object):
         self.value = value
         if key is not None:
             self.left = AVLNode(None, None)
+            self.left.set_parent(self)
             self.right = AVLNode(None, None)
+            self.right.set_parent(self)
             self.height = 0
             self.size = 1
         else:
