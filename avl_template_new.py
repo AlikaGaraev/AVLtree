@@ -213,12 +213,35 @@ class AVLTree(object):
                 y.set_right(new_node)
         self.size += 1
         rotation_count = 0
+        parent = new_node.get_parent()
+        while parent is not None: #we are traveling up until we get to the root
+            old_height = parent.get_height #still old hight, not updated
+            parent.set_height(1 + max(parent.get_left().get_height(), parent.get_right().get_height()))  #updating new hight
+            parent_bf = parent.get_bf()
+            if abs(parent_bf) < 2 and old_height == parent.get_height(): #3.2
+                return rotation_count
+            elif abs(parent_bf) < 2 and old_height != parent.get_height(): #3.3
+                parent = parent.get_parent()
+            elif abs(parent_bf) == 2: #3.3
+                if parent_bf == -2:
+                    if parent.get_right().get_bf() == 1:  # right rotation before
+                        self.right_rotate(parent.get_right())
+                        rotation_count += 1
+                    self.left_rotate(parent)
+                else:
+                    if parent.get_left().get_bf() == -1:  # left rotation before
+                        self.left_rotate(parent.get_left())
+                        rotation_count += 1
+                    self.right_rotate(parent)
+                rotation_count += 1
+            parent = parent.get_parent()
+        return rotation_count
 
-        return -1
 
     """" looks for key in the sub tree of root and returns the lest node encountered"""
 
     def tree_position(self, key):
+        global y
         root = self.root
         while root is not None:
             y = root
