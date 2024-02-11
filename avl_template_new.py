@@ -388,7 +388,34 @@ class AVLTree(object):
             dictionary smaller than node.key, right is an AVLTree representing the keys in the
             dictionary larger than node.key
         """
-        return None
+        parent = node.get_parent()
+        left_subtree = AVLTree()
+        right_subtree = AVLTree()
+        if parent.get_key() < node.get_key():
+            left_subtree = self.get_sub_tree(node.get_left()).join(self.get_sub_tree(parent.get_left()),parent.get_key(),parent.get_value())
+        else:
+            right_subtree = self.get_sub_tree(node.get_right()).join(self.get_sub_tree(parent.get_right()),parent.get_key(),parent.get_value())
+        parent = parent.get_parent()
+        while parent is not None:
+            if parent.get_key() < node.get_key():
+                left_subtree = left_subtree.join(self.get_sub_tree(parent.get_left()),parent.get_key(),parent.get_value())
+            else:
+                right_subtree = right_subtree.join(self.get_sub_tree(parent.get_right()), parent.get_key(),parent.get_value())
+        return [left_subtree, right_subtree]
+
+    def get_sub_tree(self, node):
+        """
+        return the sub tree where node is the root
+        :param node: Node
+        :return: AVLTree
+        """
+        tree = AVLTree()
+        if node.is_real_node():
+            tree.root = node
+            tree.root.parent = None
+        return tree
+
+
 
     def join(self, tree2, key, val):
         """
