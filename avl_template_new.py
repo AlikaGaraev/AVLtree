@@ -388,22 +388,23 @@ class AVLTree(object):
             dictionary smaller than node.key, right is an AVLTree representing the keys in the
             dictionary larger than node.key
         """
+        left_subtree = self.get_sub_tree(node.get_left())
+        right_subtree = self.get_sub_tree(node.get_right())
+
         parent = node.get_parent()
-        left_subtree = AVLTree()
-        right_subtree = AVLTree()
-        if parent.get_key() < node.get_key():
-            left_subtree = self.get_sub_tree(node.get_left()).join(self.get_sub_tree(parent.get_left()),parent.get_key(),parent.get_value())
-        else:
-            right_subtree = self.get_sub_tree(node.get_right()).join(self.get_sub_tree(parent.get_right()),parent.get_key(),parent.get_value())
-        parent = parent.get_parent()
         while parent is not None:
             if parent.get_key() < node.get_key():
-                left_subtree = left_subtree.join(self.get_sub_tree(parent.get_left()),parent.get_key(),parent.get_value())
+                old_left_subtree = left_subtree
+                left_subtree = self.get_sub_tree(parent.get_left())
+                left_subtree.join(old_left_subtree, parent.get_key(), parent.get_value())
             else:
-                right_subtree = right_subtree.join(self.get_sub_tree(parent.get_right()), parent.get_key(),parent.get_value())
+                right_subtree.join(self.get_sub_tree(parent.get_right()), parent.get_key(), parent.get_value())
+            parent = parent.get_parent()
+
         return [left_subtree, right_subtree]
 
-    def get_sub_tree(self, node):
+    @staticmethod
+    def get_sub_tree(node):
         """
         return the sub tree where node is the root
         :param node: Node
@@ -414,8 +415,6 @@ class AVLTree(object):
             tree.root = node
             tree.root.parent = None
         return tree
-
-
 
     def join(self, tree2, key, val):
         """
@@ -434,8 +433,16 @@ class AVLTree(object):
         new_node = AVLNode(key, val)
         a = self.root
         b = tree2.get_root()
-        diff = abs(a.get_height() - b.get_height())
         self.tree_size = self.tree_size + 1 + tree2.size()
+
+        if a is None or b is None:
+            if a is None:
+                self.root = b
+            diff = self.root.get_height() if self.root is not None else 0
+            self.insert(key, val)
+            return diff
+
+        diff = abs(a.get_height() - b.get_height())
         old_height = 0
 
         if a.get_height() == b.get_height():
