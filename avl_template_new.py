@@ -10,7 +10,7 @@ class AVLNode(object):
 
     def __init__(self, key, value):
         """
-        Constructor, you are allowed to add more fields.
+        O(1) - Constructor, you are allowed to add more fields.
 
         :type key: int | None
         :param key: key of your node
@@ -33,7 +33,8 @@ class AVLNode(object):
 
     def get_left(self):
         """
-        Returns the left child
+        O(1) - Returns the left child
+
         :rtype: AVLNode
         :returns: the left child of self, None if there is no left child (if self is virtual)
         """
@@ -41,7 +42,7 @@ class AVLNode(object):
 
     def get_right(self):
         """
-        Returns the right child
+        O(1) - Returns the right child
 
         :rtype: AVLNode
         :returns: the right child of self, None if there is no right child (if self is virtual)
@@ -50,7 +51,7 @@ class AVLNode(object):
 
     def get_parent(self):
         """
-        Returns the parent
+        O(1) - Returns the parent
 
         :rtype: AVLNode
         :returns: the parent of self, None if there is no parent
@@ -59,7 +60,7 @@ class AVLNode(object):
 
     def get_key(self):
         """
-        Returns the key
+        O(1) - Returns the key
 
         :rtype: int | None
         :returns: the key of self, None if the node is virtual
@@ -68,7 +69,7 @@ class AVLNode(object):
 
     def get_value(self):
         """
-        Returns the value
+        O(1) - Returns the value
 
         :rtype: any
         :returns: the value of self, None if the node is virtual
@@ -77,7 +78,7 @@ class AVLNode(object):
 
     def get_height(self):
         """
-        Returns the height
+        O(1) - Returns the height
 
         :rtype: int
         :returns: the height of self, -1 if the node is virtual
@@ -86,7 +87,7 @@ class AVLNode(object):
 
     def get_bf(self):
         """
-        Returns the balance factor
+        O(1) - Returns the balance factor
 
         :rtype: int
         :returns: the balance factor of self, 0 if the node is virtual
@@ -97,7 +98,7 @@ class AVLNode(object):
 
     def set_left(self, node):
         """
-        Sets left child, while updating self's height and the child's parent to self
+        O(1) - Sets left child, while updating self's height and the child's parent to self
 
         :type node: AVLNode
         :param node: a node
@@ -109,7 +110,7 @@ class AVLNode(object):
 
     def set_right(self, node):
         """
-        Sets right child, while updating self's height and the child's parent to self
+        O(1) - Sets right child, while updating self's height and the child's parent to self
 
         :type node: AVLNode
         :param node: a node
@@ -121,7 +122,7 @@ class AVLNode(object):
 
     def set_parent(self, node):
         """
-        Sets parent
+        O(1) - Sets parent
 
         :type node: AVLNode | None
         :param node: a node
@@ -130,7 +131,7 @@ class AVLNode(object):
 
     def set_value(self, value):
         """
-        Sets value
+        O(1) - Sets value
 
         :type value: any
         :param value: data
@@ -139,7 +140,7 @@ class AVLNode(object):
 
     def set_height(self, h):
         """
-        Sets the height of the node
+        O(1) - Sets the height of the node
 
         :type h: int
         :param h: the height
@@ -148,7 +149,7 @@ class AVLNode(object):
 
     def is_real_node(self):
         """
-        Check if self is not a virtual node
+        O(1) - Checks if self is not a virtual node
 
         :rtype: bool
         :returns: False if self is a virtual node, True otherwise.
@@ -163,14 +164,14 @@ class AVLTree(object):
 
     def __init__(self):
         """
-        Constructor, you are allowed to add more fields.
+        O(1) - Constructor, you are allowed to add more fields.
         """
         self.root = None
         self.tree_size = 0
 
     def search(self, key):
         """
-        Searches for a value in the dictionary corresponding to the key
+        O(logn) - Searches for a value in the dictionary corresponding to the key
 
         :type key: int
         :param key: a key to be searched
@@ -186,7 +187,7 @@ class AVLTree(object):
 
     def insert(self, key, val):
         """
-        Inserts val at position i in the dictionary
+        O(logn) - Inserts val at position i in the dictionary
 
         :type key: int
         :pre: key currently does not appear in the dictionary
@@ -214,7 +215,7 @@ class AVLTree(object):
 
     def tree_position(self, key):
         """
-        Looks for key in the tree and returns the last node encountered
+        O(logn) - Looks for key in the tree and returns the last node encountered
 
         :type key: int
         :param key: the key of the node searched for
@@ -239,7 +240,7 @@ class AVLTree(object):
 
     def delete(self, node):
         """
-        Deletes node from the dictionary
+        O(logn) - Deletes node from the dictionary
 
         :type node: AVLNode
         :pre: node is a real pointer to a node in self
@@ -288,11 +289,11 @@ class AVLTree(object):
         else:
             parent.set_right(new_node)
 
-        return self.fix_tree(parent, old_height)
+        return rotation_count + self.fix_tree(parent, old_height)
 
     def fix_tree(self, node, init_height):
         """
-        Fixes the balance of the tree, from provided node and upwards
+        O(logn) - Fixes the balance of the tree, from provided node and upwards
 
         :type node: AVLNode
         :param node: the node to balance the tree up from
@@ -336,7 +337,7 @@ class AVLTree(object):
 
     def avl_to_array(self):
         """
-        Returns an array representing dictionary
+        O(n) - Returns an array representing dictionary
 
         :rtype: list
         :returns: a sorted list according to key of tuples (key, value) representing the data structure
@@ -345,31 +346,27 @@ class AVLTree(object):
             return []
         return self.in_order_scan(self.root)
 
-    def in_order_scan(self, node, with_parent=False):
+    def in_order_scan(self, node):
         """
-        Scans the tree in order
+        O(n) - Scans the tree in order
 
         :type node: AVLNode
         :param node: root of tree to scan
-        :type with_parent: bool
-        :param with_parent: whether to include parent's key
         :rtype: list
         :returns: in order scanned list with tuples (key, value) representing the data structure
         """
         if not node.is_real_node():
             return []
         node_rep = (node.get_key(), node.get_value())
-        if with_parent and node.get_parent() is not None:
-            node_rep += tuple([node.get_parent().get_key()])
         return (
-            self.in_order_scan(node.get_left(), with_parent)
+            self.in_order_scan(node.get_left())
             + [node_rep]
-            + self.in_order_scan(node.get_right(), with_parent)
+            + self.in_order_scan(node.get_right())
         )
 
     def size(self):
         """
-        Returns the number of items in dictionary
+        O(1) - Returns the number of items in dictionary
 
         :rtype: int
         :returns: the number of items in dictionary
@@ -378,7 +375,7 @@ class AVLTree(object):
 
     def split(self, node):
         """
-        Splits the dictionary at the i'th index
+        O(logn) - Splits the dictionary at the i'th index
 
         :type node: AVLNode
         :pre: node is in self
@@ -396,9 +393,15 @@ class AVLTree(object):
             if parent.get_key() < node.get_key():
                 old_left_subtree = left_subtree
                 left_subtree = self.get_sub_tree(parent.get_left())
-                left_subtree.join(old_left_subtree, parent.get_key(), parent.get_value())
+                left_subtree.join(
+                    old_left_subtree, parent.get_key(), parent.get_value()
+                )
             else:
-                right_subtree.join(self.get_sub_tree(parent.get_right()), parent.get_key(), parent.get_value())
+                right_subtree.join(
+                    self.get_sub_tree(parent.get_right()),
+                    parent.get_key(),
+                    parent.get_value(),
+                )
             parent = parent.get_parent()
 
         return [left_subtree, right_subtree]
@@ -406,7 +409,8 @@ class AVLTree(object):
     @staticmethod
     def get_sub_tree(node):
         """
-        return the sub tree where node is the root
+        O(1) - Returns the subtree where node is the root
+
         :param node: Node
         :return: AVLTree
         """
@@ -418,7 +422,7 @@ class AVLTree(object):
 
     def join(self, tree2, key, val):
         """
-        Joins self with key and another AVLTree
+        O(logn) - Joins self with key and another AVLTree
 
         :type tree2: AVLTree
         :param tree2: a dictionary to be joined with self
@@ -475,7 +479,8 @@ class AVLTree(object):
 
     def get_root(self):
         """
-        Returns the root of the tree representing the dictionary
+        O(1) - Returns the root of the tree representing the dictionary
+
 
         :rtype: AVLNode
         :returns: the root, None if the dictionary is empty
@@ -484,7 +489,7 @@ class AVLTree(object):
 
     def rotate(self, x, right=False):
         """
-        Performs a rotation, by default to the left, but if "right" is true then to the right
+        O(1) - Performs a rotation, by default to the left, but if "right" is true then to the right
 
         :type x: AVLNode
         :param x: the old root of the sub-tree to be rotated
@@ -521,7 +526,7 @@ class AVLTree(object):
 
     def left_rotate(self, x):
         """
-        Performs a left rotation
+        O(1) - Performs a left rotation
 
         :type x: AVLNode
         :param x: the old root of the sub-tree to be rotated
@@ -532,7 +537,7 @@ class AVLTree(object):
 
     def right_rotate(self, x):
         """
-        Performs a right rotation
+        O(1) - Performs a right rotation
 
         :type x: AVLNode
         :param x: the old root of the sub-tree to be rotated
