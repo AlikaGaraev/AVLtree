@@ -437,6 +437,10 @@ class AVLTree(object):
         new_node = AVLNode(key, val)
         a = self.root
         b = tree2.get_root()
+        # if tree2 is smaller than self
+        if b.get_key() < a.get_key():
+            b = self.root
+            a = tree2.get_root()
         self.tree_size = self.tree_size + 1 + tree2.size()
 
         if a is None or b is None:
@@ -448,11 +452,6 @@ class AVLTree(object):
 
         diff = abs(a.get_height() - b.get_height())
         old_height = 0
-
-        # if tree2 is smaller than self
-        if b.get_key() < a.get_key():
-            b = self.root
-            a = tree2.get_root()
 
         if a.get_height() == b.get_height():
             self.root = new_node
