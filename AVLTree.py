@@ -1,8 +1,9 @@
-# username - complete info
-# id1      - 323222141
-# name1    - Alika Garaev
-# id2      - 322868852
-# name2    - Ishay Yemini
+# username1 - ishayyem
+# id1       - 322868852
+# name1     - Ishay Yemini
+# username2 - alikagaraev
+# id2       - 323222141
+# name2     - Alika Garaev
 
 
 class AVLNode(object):
