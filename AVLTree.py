@@ -391,10 +391,10 @@ class AVLTree(object):
         parent = node.get_parent()
         while parent is not None:
             if parent.get_key() < node.get_key():
-                old_left_subtree = left_subtree
-                left_subtree = self.get_sub_tree(parent.get_left())
                 left_subtree.join(
-                    old_left_subtree, parent.get_key(), parent.get_value()
+                    self.get_sub_tree(parent.get_left()),
+                    parent.get_key(),
+                    parent.get_value(),
                 )
             else:
                 right_subtree.join(
@@ -448,6 +448,11 @@ class AVLTree(object):
 
         diff = abs(a.get_height() - b.get_height())
         old_height = 0
+
+        # if tree2 is smaller than self
+        if b.get_key() < a.get_key():
+            b = self.root
+            a = tree2.get_root()
 
         if a.get_height() == b.get_height():
             self.root = new_node
