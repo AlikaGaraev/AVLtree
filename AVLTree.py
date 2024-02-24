@@ -302,35 +302,35 @@ class AVLTree(object):
         :rtype: int
         :returns: the amount of operations required to rebalance the tree
         """
-        parent = node
         old_height = init_height
         rotation_count = 0
 
-        while parent is not None:  # we go up here, so we can't use is_real_node()
-            if abs(parent.get_bf()) < 2 and old_height == parent.get_height():
+        while node is not None:  # we go up here, so we can't use is_real_node()
+            # store parent before rotations!
+            parent = node.get_parent()
+
+            if abs(node.get_bf()) < 2 and old_height == node.get_height():
                 return rotation_count
 
-            elif abs(parent.get_bf()) == 2:
-                if parent.get_bf() == -2:
-                    if parent.get_right().get_bf() == 1:  # right rotation before
-                        self.right_rotate(parent.get_right())
+            elif abs(node.get_bf()) == 2:
+                if node.get_bf() == -2:
+                    if node.get_right().get_bf() == 1:  # right rotation before
+                        self.right_rotate(node.get_right())
                         rotation_count += 1
-                    self.left_rotate(parent)
+                    self.left_rotate(node)
                 else:
-                    if parent.get_left().get_bf() == -1:  # left rotation before
-                        self.left_rotate(parent.get_left())
+                    if node.get_left().get_bf() == -1:  # left rotation before
+                        self.left_rotate(node.get_left())
                         rotation_count += 1
-                    self.right_rotate(parent)
+                    self.right_rotate(node)
 
             rotation_count += 1
-            parent = parent.get_parent()
-            if parent is not None:
-                old_height = parent.get_height()
-                parent.set_height(
-                    1
-                    + max(
-                        parent.get_left().get_height(), parent.get_right().get_height()
-                    )
+
+            node = parent
+            if node is not None:
+                old_height = node.get_height()
+                node.set_height(
+                    1 + max(node.get_left().get_height(), node.get_right().get_height())
                 )
 
         return rotation_count
